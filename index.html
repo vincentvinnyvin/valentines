@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Be My Valentine?</title>
     <style>
-        /* ... Previous styles remain the same until .no-btn ... */
+        /* Previous styles remain the same until .countdown */
         body {
             margin: 0;
             min-height: 100vh;
@@ -57,6 +57,26 @@
             position: relative;
         }
 
+        /* Updated countdown styling */
+        .countdown {
+            font-size: 2em;
+            color: #ff1a75;
+            margin-bottom: 30px;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(255, 26, 117, 0.2);
+            border: 2px solid rgba(255, 26, 117, 0.3);
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 4px 15px rgba(255, 26, 117, 0.2); }
+            50% { box-shadow: 0 4px 25px rgba(255, 26, 117, 0.4); }
+            100% { box-shadow: 0 4px 15px rgba(255, 26, 117, 0.2); }
+        }
+
         .title {
             font-size: 2.5em;
             color: #ff4d4d;
@@ -74,6 +94,7 @@
             animation: pulse 1s infinite;
         }
 
+        /* Rest of the styles remain the same */
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.2); }
@@ -199,11 +220,18 @@
             75% { color: #ff3399; }
             100% { color: #ff4d4d; }
         }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
     <div class="floating-hearts"></div>
     <div class="container">
+        <div id="countdown" class="countdown"></div>
         <h1 class="title">Dear Tiffany,<br>Do you want to be my Valentine? 💝</h1>
         
         <div class="image-container">
@@ -235,6 +263,25 @@
             }
         }
 
+        function updateCountdown() {
+            const valentineDate = new Date('February 14, 2025 00:00:00').getTime();
+            const now = new Date().getTime();
+            const timeLeft = valentineDate - now;
+
+            if (timeLeft < 0) {
+                document.getElementById('countdown').innerHTML = "Happy Valentine's Day! ❤️";
+                return;
+            }
+
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            document.getElementById('countdown').innerHTML = 
+                `💖 ${days}d ${hours}h ${minutes}m ${seconds}s 💖`;
+        }
+
         function rejectValentine() {
             const mainImage = document.getElementById('mainImage');
             mainImage.innerHTML = "😢";
@@ -245,6 +292,7 @@
             document.getElementById('successMessage').style.display = 'block';
             document.querySelector('.button-container').style.display = 'none';
             document.querySelector('.title').style.display = 'none';
+            document.getElementById('countdown').style.display = 'none';
             
             createHearts();
             document.body.style.background = 'linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%)';
@@ -336,16 +384,10 @@
             }
         });
 
-        document.styleSheets[0].insertRule(`
-            @keyframes fall {
-                to {
-                    transform: translateY(100vh) rotate(360deg);
-                }
-            }
-        `, document.styleSheets[0].cssRules.length);
-
-        // Initialize floating hearts
+        // Initialize floating hearts and countdown
         createFloatingHearts();
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
     </script>
 </body>
 </html>
